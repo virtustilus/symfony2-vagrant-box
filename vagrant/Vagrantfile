@@ -129,23 +129,81 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision :shell do |shell|
       shell.inline = "
+
         apt-get update
+        apt-get install python-software-properties -y
+
+        apt-add-repository ppa:chris-lea/node.js -y
+        apt-get update
+
         apt-get install nginx -y
         apt-get install -y php5-cli php5-common php5-mysql php5-gd php5-fpm php5-cgi php5-fpm php-pear php5-mcrypt
         apt-get install -y php5-intl
 
-        #perl -i -p -e's///' /etc/default/varnish
+        ### perl -i -p -e's///' /etc/default/varnish
         perl -i -p -e's/;?cgi\.fix_pathinfo=./cgi.fix_pathinfo=0/' /etc/php5/fpm/php.ini
 
-        service php-fpm restart
+        #xdebug
+            #'xdebug.default_enable = 1',
+            #'xdebug.remote_autostart = 1',
+            #'xdebug.remote_connect_back = 1',
+            #'xdebug.remote_enable = 1',
+            #'xdebug.remote_handler = dbgp',
+            #'xdebug.remote_port = 9000',
+            #'xdebug.remote_host = 192.168.55.1',
+            #'xdebug.max_nesting_level = 350'
+
+        #PHP Timezone, 'memory_limit = -1, post size
+
+
+        service php5-fpm restart
+
+        perl -i -p -e's/^;?listen.owner.*/listen.owner = www-data/' /etc/php5/fpm/pool.d/www.conf
+        perl -i -p -e's/^;?listen.group.*/listen.group = www-data/' /etc/php5/fpm/pool.d/www.conf
+        perl -i -p -e's/^;?listen.mode.*/listen.mode = 0660/' /etc/php5/fpm/pool.d/www.conf
+        perl -i -p -e's/^listen\s*=\s*\d+.\d+.\d+.\d+:\d+/listen = \\/var\\/run\\/php5-fpm.sock/' /etc/php5/fpm/pool.d/www.conf
+        service php5-fpm restart
+
+        echo 'mysql-server-5.5 mysql-server/root_password_again password root' | debconf-set-selections
+        echo 'mysql-server-5.5 mysql-server/root_password password root' | debconf-set-selections
+        apt-get install -y mysql-server
+        apt-get install -y mysql-client mysql-common
+
+        echo 'create database project1' | mysql -u root --password=root
 
         cp /var/www/vagrant/vagrant/files/etc_nginx_sites/* /etc/nginx/sites-available/
         ln -s /etc/nginx/sites-available/* /etc/nginx/sites-enabled/
-
         service nginx restart
-        apt-get install -y mysql-server mysql-client mysql-common
 
-        
+        apt-get install -y curl
+        curl -sS https://getcomposer.org/installer | php
+        mv /home/vagrant/composer.phar /usr/bin/composer
+
+        apt-get install nodejs -y
+        apt-get install npm -y
+
+        npm install -g bower
+        npm install -g less
+
+        apt-get install -y libsqlite3_dev
+        #mailcatcher
+            #clear autoload #perl -i -p -e's/^.*exit.*$/exit 0/' /etc/rc.local && perl -i -p -e's/^.*mailcatcher.*$//' /etc/rc.local && perl -i -p -e's/^.*exit.*$|^.*mailcatcher.*$|(^\s*$)+$//' /etc/rc.local;
+            #add autoload   #echo '/opt/vagrant_ruby/bin/mailcatcher --ip=0.0.0.0' >> /etc/rc.local && echo 'exit 0' >> /etc/rc.local
+
+
+        #apcu ? apt-get install php-apc && php5enmod apc
+
+        apt-get install git -y
+
+        perl -i -p -e's/^export\s+PS1=.*$//' /home/vagrant/.bashrc
+        echo \"export PS1='\\n\\[\\e[31;1m\\]CWD\\[\\e[0m\\]:\\[\\e[36;1m\\]\\w\\n\\[\\e[32;1m\\]\\@:\\u@\\h\\[\\e[0m\\]\\$ ' \" >> /home/vagrant/.bashrc
+
+        #copy ssh key
+
+
+        #apt-get install openjdk-7-jre-headless -y
+        #wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.1.1.deb
+        #sudo dpkg -i elasticsearch-1.1.1.deb
 
       "
   end

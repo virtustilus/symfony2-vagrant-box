@@ -2,10 +2,12 @@ server {
     listen 80;
 
     server_name project1.l;
-    root /var/www/project1/web;
+    root /var/www/vagrant/project1/web;
 
     error_log /var/log/nginx/project1.error.log;
     access_log /var/log/nginx/project1.access.log;
+
+    index app.php;
 
     # strip app.php/ prefix if it is present
     rewrite ^/app\.php/?(.*)$ /$1 permanent;

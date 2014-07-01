@@ -207,6 +207,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
         #copy ssh key
 
+        apt-get install zsh -y
+
 
         #apt-get install openjdk-7-jre-headless -y
         #wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.1.1.deb

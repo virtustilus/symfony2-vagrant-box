@@ -160,9 +160,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         echo 'date.timezone = \"Europe/Moscow\"' >> /etc/php5/conf.d/zzz_php.ini
         echo 'memory_limit = -1' >> /etc/php5/conf.d/zzz_php.ini
 
-        #PHP Timezone, 'memory_limit = -1, post size
-
-
         service php5-fpm restart
 
         perl -i -p -e's/^;?listen.owner.*/listen.owner = www-data/' /etc/php5/fpm/pool.d/www.conf

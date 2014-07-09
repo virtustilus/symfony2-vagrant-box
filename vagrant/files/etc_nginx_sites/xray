@@ -1,0 +1,42 @@
+server {
+    listen 80;
+
+    server_name xray.l;
+    root /var/www/xray/web;
+
+    error_log /var/log/nginx/xray.error.log;
+    access_log /var/log/nginx/xray.access.log;
+
+    index app.php;
+
+    # strip app.php/ prefix if it is present
+    rewrite ^/app\.php/?(.*)$ /$1 permanent;
+
+    location / {
+        index app.php;
+        try_files $uri @rewriteapp;
+    }
+
+    location @rewriteapp {
+        rewrite ^(.*)$ /app.php/$1 last;
+    }
+
+    #development timeouts
+    keepalive_timeout  15000;
+    client_header_timeout 15000;
+    client_body_timeout 15000;
+    send_timeout 15000;
+    fastcgi_read_timeout 15000;
+
+    # pass the PHP scripts to FastCGI server from upstream phpfcgi
+    location ~ ^/(app|app_dev|config|extra/apc|extra/phpinfo)\.php(/|$) {
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param  SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param  HTTPS off;
+
+        #development timeouts
+        fastcgi_read_timeout 15000;
+    }
+}

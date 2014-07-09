@@ -144,31 +144,33 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
         #xdebug
         apt-get install php5-xdebug
+        rm -f /etc/php5/fpm/conf.d/zzz_xdebug.ini
         rm -f /etc/php5/cgi/conf.d/zzz_xdebug.ini
-        echo 'xdebug.default_enable = 1' >> /etc/php5/cgi/conf.d/zzz_xdebug.ini
-        echo 'xdebug.remote_autostart = 1' >> /etc/php5/cgi/conf.d/zzz_xdebug.ini
-        echo 'xdebug.remote_connect_back = 1' >> /etc/php5/cgi/conf.d/zzz_xdebug.ini
-        echo 'xdebug.remote_enable = 1' >> /etc/php5/cgi/conf.d/zzz_xdebug.ini
-        echo 'xdebug.remote_handler = \"dbgp\"' >> /etc/php5/cgi/conf.d/zzz_xdebug.ini
-        echo 'xdebug.remote_port = 9000' >> /etc/php5/cgi/conf.d/zzz_xdebug.ini
-        echo 'xdebug.remote_host = \"192.168.55.1\"' >> /etc/php5/cgi/conf.d/zzz_xdebug.ini
-        echo 'xdebug.max_nesting_level = 350' >> /etc/php5/cgi/conf.d/zzz_xdebug.ini
-        echo 'xdebug.idekey = \"PHPSTORM\"' >> /etc/php5/cgi/conf.d/zzz_xdebug.ini
-
         rm -f /etc/php5/cli/conf.d/zzz_xdebug.ini
-        echo 'xdebug.default_enable = 1' >> /etc/php5/cli/conf.d/zzz_xdebug.ini
-        echo 'xdebug.remote_autostart = 1' >> /etc/php5/cli/conf.d/zzz_xdebug.ini
-        echo 'xdebug.remote_connect_back = 1' >> /etc/php5/cli/conf.d/zzz_xdebug.ini
-        echo 'xdebug.remote_enable = 1' >> /etc/php5/cli/conf.d/zzz_xdebug.ini
-        echo 'xdebug.remote_handler = \"dbgp\"' >> /etc/php5/cli/conf.d/zzz_xdebug.ini
-        echo 'xdebug.remote_port = 9000' >> /etc/php5/cli/conf.d/zzz_xdebug.ini
-        echo 'xdebug.remote_host = \"192.168.55.1\"' >> /etc/php5/cli/conf.d/zzz_xdebug.ini
-        echo 'xdebug.max_nesting_level = 350' >> /etc/php5/cli/conf.d/zzz_xdebug.ini
-        echo 'xdebug.idekey = \"PHPSTORM\"' >> /etc/php5/cli/conf.d/zzz_xdebug.ini
+        rm -f /etc/php5/mods-available/zzz_xdebug.ini
+        rm -f /etc/php5/mods-available/zzz_php.ini
+        
+        
+        echo 'xdebug.default_enable = 1' >> /etc/php5/mods-available/zzz_xdebug.ini
+        echo 'xdebug.remote_autostart = 1' >> /etc/php5/mods-available/zzz_xdebug.ini
+        echo 'xdebug.remote_connect_back = 1' >> /etc/php5/mods-available/zzz_xdebug.ini
+        echo 'xdebug.remote_enable = 1' >> /etc/php5/mods-available/zzz_xdebug.ini
+        echo 'xdebug.remote_handler = \"dbgp\"' >> /etc/php5/mods-available/zzz_xdebug.ini
+        echo 'xdebug.remote_port = 9000' >> /etc/php5/mods-available/zzz_xdebug.ini
+        echo 'xdebug.remote_host = \"192.168.55.1\"' >> /etc/php5/mods-available/zzz_xdebug.ini
+        echo 'xdebug.max_nesting_level = 350' >> /etc/php5/mods-available/zzz_xdebug.ini
+        echo 'xdebug.idekey = \"PHPSTORM\"' >> /etc/php5/mods-available/zzz_xdebug.ini
 
-        rm -f /etc/php5/conf.d/zzz_php.ini
-        echo 'date.timezone = \"Europe/Moscow\"' >> /etc/php5/conf.d/zzz_php.ini
-        echo 'memory_limit = -1' >> /etc/php5/conf.d/zzz_php.ini
+
+        echo 'date.timezone = \"Europe/Paris\"' >> /etc/php5/mods-available/zzz_php.ini
+        echo 'memory_limit = -1' >> /etc/php5/php5/mods-available/zzz_php.ini
+
+        ln -s /etc/php5/mods-available/zzz_xdebug.ini /etc/php5/fpm/conf.d/
+        ln -s /etc/php5/mods-available/zzz_xdebug.ini /etc/php5/cli/conf.d/
+        ln -s /etc/php5/mods-available/zzz_xdebug.ini /etc/php5/cgi/conf.d/
+        ln -s /etc/php5/mods-available/zzz_php.ini /etc/php5/cli/conf.d/
+        ln -s /etc/php5/mods-available/zzz_php.ini /etc/php5/fpm/conf.d/
+        ln -s /etc/php5/mods-available/zzz_php.ini /etc/php5/cgi/conf.d/
 
         service php5-fpm restart
 
@@ -185,7 +187,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         service nginx restart
 
         apt-get install -y curl
-        curl -sS https://getcomposer.org/installer | php
+        cd /home/vagrant && curl -sS https://getcomposer.org/installer | php
         mv /home/vagrant/composer.phar /usr/bin/composer
 
         apt-get install nodejs -y

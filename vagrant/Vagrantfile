@@ -44,6 +44,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.synced_folder "../", "/var/www/vagrant", :nfs => true
   config.vm.synced_folder "/Users/virtustilus/Projects/xray/digisec-xray", "/var/www/xray", :nfs => true
+  config.vm.synced_folder "/Users/virtustilus/Projects/techsnab/techsnab-mail", "/var/www/techsnab", :nfs => true
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -181,6 +182,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
         echo 'create database project1' | mysql -u root --password=root
         echo 'create database xray' | mysql -u root --password=root
+	    echo 'create database techsnab' | mysql -u root --password=root
 
         cp /var/www/vagrant/vagrant/files/etc_nginx_sites/* /etc/nginx/sites-available/
         ln -s /etc/nginx/sites-available/* /etc/nginx/sites-enabled/
@@ -196,10 +198,25 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         npm install -g bower
         npm install -g less
 
+
+
+
+        #MAILCATHCER
         apt-get install -y libsqlite3-dev
-        #mailcatcher
-            #clear autoload #perl -i -p -e's/^.*exit.*$/exit 0/' /etc/rc.local && perl -i -p -e's/^.*mailcatcher.*$//' /etc/rc.local && perl -i -p -e's/^.*exit.*$|^.*mailcatcher.*$|(^\s*$)+$//' /etc/rc.local;
-            #add autoload   #echo '/opt/vagrant_ruby/bin/mailcatcher --ip=0.0.0.0' >> /etc/rc.local && echo 'exit 0' >> /etc/rc.local
+
+        curl -L https://get.rvm.io | bash -s stable --autolibs=enable
+        source /home/vagrant/.rvm/scripts/rvm
+
+        rvm get head
+        rvm reinstall 1.9.3 --disable-binary
+
+        rvm use 1.9.3
+
+        sudo gem install mailcatcher --verbose
+
+        perl -i -p -e's/^.*exit.*$/exit 0/' /etc/rc.local && perl -i -p -e's/^.*mailcatcher.*$//' /etc/rc.local && perl -i -p -e's/^.*exit.*$|^.*mailcatcher.*$|(^\s*$)+$//' /etc/rc.local;
+        echo '/opt/vagrant_ruby/bin/mailcatcher --ip=0.0.0.0' >> /etc/rc.local && echo 'exit 0' >> /etc/rc.local;
+
 
         #apcu ? apt-get install php-apc && php5enmod apc
 

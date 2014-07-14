@@ -201,26 +201,27 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
 
 
-        #MAILCATHCER
+        #RVM
         if [ -d /home/vagrant/.rvm/bin ]; then
             echo 'Looks like rvm was installed before'
         else
-                apt-get install -y libsqlite3-dev
-
                 curl -L https://get.rvm.io | bash -s stable --autolibs=enable
                 source /home/vagrant/.rvm/scripts/rvm
 
                 rvm get head
                 rvm reinstall 1.9.3 --disable-binary
 
-                rvm use 1.9.3
-
-                sudo gem install mailcatcher --verbose
-
-                perl -i -p -e's/^.*exit.*$/exit 0/' /etc/rc.local && perl -i -p -e's/^.*mailcatcher.*$//' /etc/rc.local && perl -i -p -e's/^.*exit.*$|^.*mailcatcher.*$|(^\s*$)+$//' /etc/rc.local;
-                echo '/opt/vagrant_ruby/bin/mailcatcher --ip=0.0.0.0' >> /etc/rc.local && echo 'exit 0' >> /etc/rc.local;
-
+                rvm use --install 1.9.3
         fi
+
+        #MAILCATCHER
+        apt-get install -y libsqlite3-dev
+        gem install mailcatcher --verbose
+
+        perl -i -p -e's/^.*exit.*$/exit 0/' /etc/rc.local && perl -i -p -e's/^.*mailcatcher.*$//' /etc/rc.local && perl -i -p -e's/^.*exit.*$|^.*mailcatcher.*$|(^\s*$)+$//' /etc/rc.local;
+        echo '/opt/vagrant_ruby/bin/mailcatcher --ip=0.0.0.0' >> /etc/rc.local && echo 'exit 0' >> /etc/rc.local;
+        killall mailcatcher
+        mailcatcher --ip=0.0.0.0
 
         #apcu ? apt-get install php-apc && php5enmod apc
 

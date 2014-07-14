@@ -1,3 +1,5 @@
 /vagrant/.vagrant/
 /.idea/
 
+/vagrant/files/etc_nginx_sites/*
+!/vagrant/files/etc_nginx_sites/project1

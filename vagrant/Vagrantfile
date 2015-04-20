@@ -44,9 +44,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   #######################--------####################################
   config.vm.synced_folder "../", "/var/www/vagrant", :nfs => true
-  config.vm.synced_folder "/Users/virtustilus/Projects/xray/digisec-xray", "/var/www/xray", :nfs => true
-  config.vm.synced_folder "/Users/virtustilus/Projects/techsnab/techsnab-mail", "/var/www/techsnab", :nfs => true
-  config.vm.synced_folder "/Users/virtustilus/Projects/inesta/estate-builders", "/var/www/inesta", :nfs => true
+  config.vm.synced_folder "/Users/virtustilus/Projects/simpleVAGRANT/project1", "/var/www/project1", :nfs => true
   ##########################-#############################
 
   # Provider-specific configuration so you can fine-tune various
@@ -55,7 +53,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   config.vm.provider "virtualbox" do |vb|
   #   # Don't boot with headless mode
-  #   vb.gui = true
+     vb.gui = true
 
      # Use VBoxManage to customize the VM. For example to change memory:
      vb.customize ["modifyvm", :id, "--memory", "800"]
@@ -185,9 +183,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
         ###############----------------#############################
         echo 'create database project1' | mysql -u root --password=root
-        echo 'create database xray' | mysql -u root --password=root
-	    echo 'create database techsnab' | mysql -u root --password=root
-	    echo 'create database inesta' | mysql -u root --password=root
 	    #######################---#################################
 
         cp /var/www/vagrant/vagrant/files/etc_nginx_sites/* /etc/nginx/sites-available/
